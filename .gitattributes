@@ -1,2 +1,3 @@
-# Show the .sql files as SQL in GitHub's language bar (they are detected as PLpgSQL otherwise)
-*.sql linguist-language=SQL
+# Show the .sql files as SQL in GitHub's language bar. They are detected as PLpgSQL
+# otherwise, and SQL is a "data" language that is only counted when marked detectable.
+*.sql linguist-language=SQL linguist-detectable
