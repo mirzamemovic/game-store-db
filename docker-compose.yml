@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:16
+    container_name: game-store-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: game_store
+    ports:
+      - "5432:5432"
+    volumes:
+      # Files run once, in alphabetical order, when the container is first created
+      - ./sql/01_schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+      - ./sql/02_seed.sql:/docker-entrypoint-initdb.d/02_seed.sql:ro
+      - ./sql:/sql:ro
+      - ./tests:/tests:ro

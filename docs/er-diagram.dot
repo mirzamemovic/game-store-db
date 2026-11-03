@@ -1,0 +1,56 @@
+digraph ER {
+  graph [rankdir=LR, bgcolor="white", pad=0.4, nodesep=0.6, ranksep=1.1, fontname="Helvetica"];
+  node  [shape=plaintext, fontname="Helvetica", fontsize=11];
+  edge  [fontname="Helvetica", fontsize=10, color="#555555", arrowsize=0.8];
+
+  customer [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5">
+   <TR><TD BGCOLOR="#1f3a5f" COLSPAN="2"><FONT COLOR="white"><B>customer</B></FONT></TD></TR>
+   <TR><TD ALIGN="LEFT"><B>PK</B> customer_id</TD><TD ALIGN="LEFT" PORT="pk">int</TD></TR>
+   <TR><TD ALIGN="LEFT">first_name</TD><TD ALIGN="LEFT">varchar(100)</TD></TR>
+   <TR><TD ALIGN="LEFT">last_name</TD><TD ALIGN="LEFT">varchar(100)</TD></TR>
+   <TR><TD ALIGN="LEFT">email <I>(unique)</I></TD><TD ALIGN="LEFT">varchar(255)</TD></TR>
+   <TR><TD ALIGN="LEFT">created_at</TD><TD ALIGN="LEFT">timestamptz</TD></TR></TABLE>>];
+
+  customer_order [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5">
+   <TR><TD BGCOLOR="#1f3a5f" COLSPAN="2"><FONT COLOR="white"><B>customer_order</B></FONT></TD></TR>
+   <TR><TD ALIGN="LEFT"><B>PK</B> order_id</TD><TD ALIGN="LEFT" PORT="pk">int</TD></TR>
+   <TR><TD ALIGN="LEFT" PORT="fk"><B>FK</B> customer_id</TD><TD ALIGN="LEFT">int</TD></TR>
+   <TR><TD ALIGN="LEFT">order_date</TD><TD ALIGN="LEFT">date</TD></TR></TABLE>>];
+
+  order_item [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5">
+   <TR><TD BGCOLOR="#1f3a5f" COLSPAN="2"><FONT COLOR="white"><B>order_item</B></FONT></TD></TR>
+   <TR><TD ALIGN="LEFT" PORT="o"><B>PK, FK</B> order_id</TD><TD ALIGN="LEFT">int</TD></TR>
+   <TR><TD ALIGN="LEFT" PORT="g"><B>PK, FK</B> game_id</TD><TD ALIGN="LEFT">int</TD></TR>
+   <TR><TD ALIGN="LEFT">quantity <I>(&gt; 0)</I></TD><TD ALIGN="LEFT">int</TD></TR>
+   <TR><TD ALIGN="LEFT">unit_price <I>(&gt;= 0)</I></TD><TD ALIGN="LEFT">numeric(10,2)</TD></TR></TABLE>>];
+
+  game [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5">
+   <TR><TD BGCOLOR="#1f3a5f" COLSPAN="2"><FONT COLOR="white"><B>game</B></FONT></TD></TR>
+   <TR><TD ALIGN="LEFT"><B>PK</B> game_id</TD><TD ALIGN="LEFT" PORT="pk">int</TD></TR>
+   <TR><TD ALIGN="LEFT">title</TD><TD ALIGN="LEFT">varchar(200)</TD></TR>
+   <TR><TD ALIGN="LEFT">genre</TD><TD ALIGN="LEFT">varchar(100)</TD></TR>
+   <TR><TD ALIGN="LEFT">platform</TD><TD ALIGN="LEFT">varchar(100)</TD></TR>
+   <TR><TD ALIGN="LEFT">list_price <I>(&gt;= 0)</I></TD><TD ALIGN="LEFT">numeric(10,2)</TD></TR></TABLE>>];
+
+  supplier_game [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5">
+   <TR><TD BGCOLOR="#1f3a5f" COLSPAN="2"><FONT COLOR="white"><B>supplier_game</B></FONT></TD></TR>
+   <TR><TD ALIGN="LEFT" PORT="s"><B>PK, FK</B> supplier_id</TD><TD ALIGN="LEFT">int</TD></TR>
+   <TR><TD ALIGN="LEFT" PORT="g"><B>PK, FK</B> game_id</TD><TD ALIGN="LEFT">int</TD></TR>
+   <TR><TD ALIGN="LEFT">supplier_price <I>(&gt;= 0)</I></TD><TD ALIGN="LEFT">numeric(10,2)</TD></TR></TABLE>>];
+
+  supplier [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5">
+   <TR><TD BGCOLOR="#1f3a5f" COLSPAN="2"><FONT COLOR="white"><B>supplier</B></FONT></TD></TR>
+   <TR><TD ALIGN="LEFT"><B>PK</B> supplier_id</TD><TD ALIGN="LEFT" PORT="pk">int</TD></TR>
+   <TR><TD ALIGN="LEFT">name</TD><TD ALIGN="LEFT">varchar(200)</TD></TR>
+   <TR><TD ALIGN="LEFT">contact_email <I>(unique)</I></TD><TD ALIGN="LEFT">varchar(255)</TD></TR></TABLE>>];
+
+  customer:pk:e       -> customer_order:fk:w [label="1 : N  places", dir=both, arrowtail=tee, arrowhead=crow];
+  customer_order:pk:e -> order_item:o:w      [label="1 : N  contains", dir=both, arrowtail=tee, arrowhead=crow];
+  game:pk:e           -> order_item:g:w      [label="1 : N  sold in", dir=both, arrowtail=tee, arrowhead=crow];
+  game:pk:e           -> supplier_game:g:w   [label="1 : N  offered as", dir=both, arrowtail=tee, arrowhead=crow];
+  supplier:pk:e       -> supplier_game:s:w   [label="1 : N  offers", dir=both, arrowtail=tee, arrowhead=crow];
+
+  {rank=same; customer; supplier;}
+  {rank=same; customer_order; game;}
+  {rank=same; order_item; supplier_game;}
+}
