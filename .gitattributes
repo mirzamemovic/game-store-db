@@ -1,0 +1,2 @@
+# Show the .sql files as SQL in GitHub's language bar (they are detected as PLpgSQL otherwise)
+*.sql linguist-language=SQL
